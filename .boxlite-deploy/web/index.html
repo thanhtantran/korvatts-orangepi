@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d1117">
+  <title>KorvaTTS — Vietnamese Voice Studio</title>
+  <style>
+    :root { font-family: Inter, system-ui, sans-serif; background:#0d1117; color:#f5f7ff; } * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:radial-gradient(circle at 85% 0,#25335c 0,transparent 30%),#0d1117; }
+    main { width:min(100% - 32px,760px); margin:0 auto; padding:60px 0; } .tag { color:#78dce8; font:600 .72rem ui-monospace,monospace; letter-spacing:.15em; }
+    h1 { font-size:clamp(2.5rem,8vw,4.8rem); letter-spacing:-.075em; margin:.35rem 0; } p { color:#aeb9d1; line-height:1.55; }
+    .card { background:#151b27dd; border:1px solid #ffffff1f; box-shadow:0 24px 70px #0007; border-radius:22px; padding:clamp(20px,5vw,38px); margin-top:28px; }
+    label { display:block; color:#cfd8ee; font-size:.82rem; font-weight:700; margin:18px 0 8px; } textarea,select,input { width:100%; color:#f5f7ff; background:#0d1117; border:1px solid #3b4760; border-radius:10px; padding:12px; font:inherit; } textarea { min-height:148px; resize:vertical; }
+    .row { display:grid; grid-template-columns:1fr 160px; gap:14px; } button { margin-top:22px; border:0; border-radius:10px; color:#07151a; background:#78dce8; padding:14px 19px; font-weight:800; font-size:1rem; cursor:pointer; } button:disabled { opacity:.55; cursor:wait; } #status { min-height:24px; color:#aeb9d1; margin:15px 0 0; } audio { width:100%; margin-top:20px; } .note { font-size:.8rem; margin-top:26px; }
+    @media (max-width:520px) { main { padding:38px 0; } .row { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <main>
+    <span class="tag">ONNX · 44.1 kHz · VIETNAMESE-FIRST</span>
+    <h1>KorvaTTS</h1>
+    <p>Chuyển văn bản tiếng Việt và tiếng Anh xen kẽ thành giọng nói tự nhiên.</p>
+    <section class="card">
+      <label for="text">Nội dung</label>
+      <textarea id="text" maxlength="500">Xin chào! Hôm nay team mình sẽ demo KorvaTTS trên BoxLite Cloud.</textarea>
+      <div class="row">
+        <div><label for="voice">Giọng đọc</label><select id="voice"></select></div>
+        <div><label for="speed">Tốc độ</label><input id="speed" type="number" min="0.5" max="2" step="0.05" value="1.05"></div>
+      </div>
+      <button id="speak" type="button">TẠO GIỌNG NÓI →</button>
+      <p id="status" role="status">Đang tải danh sách giọng…</p>
+      <audio id="player" controls hidden></audio>
+      <p class="note">Mỗi yêu cầu chạy độc quyền để ổn định CPU. Độ dài tối đa: 500 ký tự.</p>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>
