@@ -10,6 +10,8 @@
 
 KorvaTTS is an open-source text-to-speech system focused on **Vietnamese with natural code-switching** (Vietnamese sentences that contain English words, brand names, tech terms). It runs entirely on-device through ONNX Runtime: no GPU required, no API calls, 44.1 kHz output.
 
+This Orange Pi adaptation is designed to run **fully locally**: the installer stores model files in this repository's `assets/` directory, and normal inference makes no network request after the initial download. It is based on the original project, [dogenthq/KorvaTTS](https://github.com/dogenthq/KorvaTTS).
+
 The model is our own re-implementation of the 99M-parameter [Supertonic 3](https://github.com/supertone-inc/supertonic) architecture (flow-matching TTS), **trained from scratch** on Vietnamese data, with a vocoder based on [BlueCodec](https://github.com/maxmelichov/BlueTTS). Upstream Supertonic is being archived by its authors; KorvaTTS continues the line with a Vietnamese focus and an open roadmap toward voice cloning and training.
 
 **🌐 Try it in your browser — no install:** [heykorva.com](https://heykorva.com/)
@@ -35,7 +37,52 @@ The model is our own re-implementation of the 99M-parameter [Supertonic 3](https
 | `phuong_linh` — Phương Linh | `quang_huy` — Quang Huy |
 | `quynh_nhu` — Quỳnh Như | `thanh_phong` — Thanh Phong |
 
+## Orange Pi: fully local installation
+
+The following one-time setup targets an Orange Pi (or another Linux ARM64 device) with
+Python 3.10+. It creates a project-local `.venv`, installs the package there, and
+downloads the model as real files into `./assets/`—not an external Hugging Face cache
+or symlink. Internet access is needed only for this setup step.
+
+```bash
+cd korvatts-orangepi
+./scripts/install-local.sh
+```
+
+The installer creates `.env` from `.env.example`, sets
+`KORVATTS_ASSETS_DIR=assets`, and creates a private local API token. Start the service
+from the repository directory; it uses only `./assets/` and remains offline:
+
+```bash
+cd korvatts-orangepi
+HF_MODEL_ONLINE=false ./.venv/bin/python web_service.py
+```
+
+Open [http://127.0.0.1:8080](http://127.0.0.1:8080) on the Orange Pi. Verify that the
+model files are present and service is healthy:
+
+```bash
+find assets/onnx assets/voice_styles -type f | sort
+curl http://127.0.0.1:8080/healthz
+```
+
+To use the CLI without network access, start it from the repository directory (where
+`./assets` resolves automatically):
+
+```bash
+HF_MODEL_ONLINE=false ./.venv/bin/korvatts voices
+HF_MODEL_ONLINE=false ./.venv/bin/korvatts synth "Xin chào, đây là KorvaTTS." -v khanh_vy -o hello.wav
+```
+
+`KORVATTS_ASSETS_DIR=assets` is intentionally **relative to the process working
+directory**. For `web_service.py`, run it from this project directory as shown above.
+If you run it from another directory, pass an explicit `--assets-dir` to the CLI or
+set `KORVATTS_ASSETS_DIR` to an absolute path.
+
 ## Installation
+
+For the published package or environments where model files may be cached outside the
+repository:
 
 ```bash
 pip install korvatts
@@ -76,12 +123,14 @@ The package is an inference library; this repository also includes a small optio
 web demo in `web_service.py`. It serves the UI at `/`, lists voices at
 `GET /api/voices`, and produces a WAV from `POST /api/tts`.
 
-For a fully offline deployment, download/copy the model once into a fixed directory
-that contains `onnx/` and `voice_styles/`, then configure the service with a private
-`.env` file (start from `.env.example`):
+For a fully offline deployment, run `./scripts/install-local.sh` once from this
+repository. It downloads/copies the model into `./assets/`, creates `.env` with the
+relative setting `KORVATTS_ASSETS_DIR=assets`, and configures `HF_MODEL_ONLINE=false`.
+After that initial setup, start `web_service.py` from the repository directory; it
+uses only the local `assets/onnx/` and `assets/voice_styles/` files.
 
 ```dotenv
-KORVATTS_ASSETS_DIR=/home/boxlite/korvatts-assets
+KORVATTS_ASSETS_DIR=assets
 HF_MODEL_ONLINE=false
 KORVATTS_WEB_ENABLED=true
 KORVATTS_API_TOKEN=replace-with-a-long-random-token
