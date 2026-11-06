@@ -122,43 +122,6 @@ Weight giai đoạn 1 giữ nguyên chữ ký đồ thị ONNX và định dạn
 
 Tương thích này là chủ đích cho giai đoạn 1–2. **Giai đoạn 3 sẽ thay đổi kiến trúc và không còn load được bằng runtime Supertonic.** Tag phiên bản trên Hugging Face sẽ ghi rõ checkpoint nào còn tương thích.
 
-## Lộ trình
-
-| Giai đoạn | Phạm vi | Trạng thái |
-|-----------|---------|------------|
-| **1. Inference ONNX** | Package Python, CLI, weight + voice style công bố trên Hugging Face | ✅ bản này |
-| **2. Voice cloning + training** | Encoder từ audio tham chiếu → voice style, script train / fine-tune bằng PyTorch, công cụ chuẩn bị dữ liệu | 🔜 dự kiến |
-| **3. Cải tiến kiến trúc** | Thay đổi kiến trúc TTS + cloning để prosody tiếng Việt và độ giống giọng tốt hơn. **Sẽ không còn tương thích với Supertonic.** | 🧭 sau này |
-
-Giai đoạn 2 được ưu tiên dựa trên mức độ quan tâm của cộng đồng và nguồn lực hiện có. Theo dõi tiến độ trên [Discord](https://discord.gg/cX5rmsRcsg) và tab Issues — mọi phản hồi, báo lỗi hay đề xuất giọng mới đều góp phần định hình những gì được xây tiếp theo.
-
-<a href="https://star-history.com/#dogenthq/KorvaTTS&Date"><img src="https://api.star-history.com/svg?repos=dogenthq/KorvaTTS&type=Date" alt="Biểu đồ số sao theo thời gian" width="600"></a>
-
-## Dữ liệu huấn luyện
-
-- Một phần đã lọc lại của [PhoAudiobook](https://huggingface.co/datasets/thivux/phoaudiobook) — kho ngữ liệu audiobook tiếng Việt quy mô lớn, giới thiệu trong bài [Zero-Shot Text-to-Speech for Vietnamese (ACL 2025)](https://aclanthology.org/2025.acl-short.81.pdf).
-- Bộ dữ liệu code-switching Việt/Anh do tác giả tự thu thập để cải thiện khả năng đọc văn bản pha trộn ngôn ngữ. Bộ này không được công bố.
-
-## Cộng đồng
-
-Tham gia Discord của KorvaTTS để hỏi đáp, chia sẻ sản phẩm bạn làm, đề xuất giọng mới và theo dõi tiến độ giai đoạn 2: **[discord.gg/cX5rmsRcsg](https://discord.gg/cX5rmsRcsg)**. Báo lỗi và đề xuất tính năng gửi qua [GitHub Issues](https://github.com/dogenthq/KorvaTTS/issues).
-
-## Ủng hộ dự án
-
-KorvaTTS miễn phí và mã nguồn mở. Mỗi lần train và thu âm giọng đều tốn tiền thật — nếu dự án hữu ích với bạn, một khoản ủng hộ nhỏ sẽ đi thẳng vào phần voice cloning và training ở giai đoạn 2. Quét mã VietQR bên dưới bằng app ngân hàng bất kỳ.
-
-<img src="https://img.vietqr.io/image/970407-19035566489014-compact.png?addInfo=Ung%20ho%20KorvaTTS&accountName=LE%20TAN%20NGHIA" alt="VietQR — Techcombank 19035566489014 — LE TAN NGHIA" width="320">
-
-## Đóng góp
-
-Hoan nghênh issue và pull request. Chạy kiểm tra cục bộ:
-
-```bash
-pip install -e ".[dev]"
-ruff check .
-pytest        # test cần model tự bỏ qua nếu chưa có ./assets
-```
-
 ## License
 
 | Thành phần | License |
