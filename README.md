@@ -2,19 +2,11 @@
 
 [🇻🇳 Tiếng Việt](README.vi.md)
 
-[![Models](https://img.shields.io/badge/🤗%20Hugging%20Face-dogenthq%2FKorvaTTS-blue)](https://huggingface.co/dogenthq/KorvaTTS)
-[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/dogenthq/KorvaTTS?style=social)](https://github.com/dogenthq/KorvaTTS/stargazers)
-[![Try it online](https://img.shields.io/badge/🌐%20Try%20it%20online-heykorva.com-2ea44f)](https://heykorva.com/)
-[![Discord](https://img.shields.io/badge/Discord-join%20the%20community-5865F2?logo=discord&logoColor=white)](https://discord.gg/cX5rmsRcsg)
-
 KorvaTTS is an open-source text-to-speech system focused on **Vietnamese with natural code-switching** (Vietnamese sentences that contain English words, brand names, tech terms). It runs entirely on-device through ONNX Runtime: no GPU required, no API calls, 44.1 kHz output.
 
 This Orange Pi adaptation is designed to run **fully locally**: the installer stores model files in this repository's `assets/` directory, and normal inference makes no network request after the initial download. It is based on the original project, [dogenthq/KorvaTTS](https://github.com/dogenthq/KorvaTTS).
 
 The model is our own re-implementation of the 99M-parameter [Supertonic 3](https://github.com/supertone-inc/supertonic) architecture (flow-matching TTS), **trained from scratch** on Vietnamese data, with a vocoder based on [BlueCodec](https://github.com/maxmelichov/BlueTTS). Upstream Supertonic is being archived by its authors; KorvaTTS continues the line with a Vietnamese focus and an open roadmap toward voice cloning and training.
-
-**🌐 Try it in your browser — no install:** [heykorva.com](https://heykorva.com/)
 
 ## Highlights
 
@@ -171,43 +163,6 @@ tắt.”**, while the Bearer-protected `/api/*` endpoints continue serving requ
 The phase-1 weights keep the exact ONNX graph signatures and voice-style JSON format of Supertonic 3. You can copy the KorvaTTS `onnx/` and `voice_styles/` folders into any Supertonic 3 runtime (Python, Node.js, browser/WebGPU, Rust, C++, Swift, Flutter, …) and they will work unchanged.
 
 This compatibility is intentional for phases 1–2. **Phase 3 will change the architecture and will not be loadable by Supertonic runtimes.** Version tags on Hugging Face will make it clear which checkpoints are compatible.
-
-## Roadmap
-
-| Phase | Scope | Status |
-|-------|-------|--------|
-| **1. ONNX inference** | Python package, CLI, published weights + voice styles on Hugging Face | ✅ this release |
-| **2. Voice cloning + training** | Reference-audio → voice style encoder, PyTorch training / fine-tuning recipes, dataset tooling | 🔜 planned |
-| **3. Architecture improvements** | Original changes to the TTS + cloning architecture for better Vietnamese prosody and cloning fidelity. **Breaks Supertonic compatibility.** | 🧭 later |
-
-Phase 2 is prioritized based on community interest and available resources. Follow progress on [Discord](https://discord.gg/cX5rmsRcsg) and the issues tab — feedback, bug reports, and voice requests all help shape what gets built next.
-
-<a href="https://star-history.com/#dogenthq/KorvaTTS&Date"><img src="https://api.star-history.com/svg?repos=dogenthq/KorvaTTS&type=Date" alt="Star History Chart" width="600"></a>
-
-## Training data
-
-- A filtered subset of [PhoAudiobook](https://huggingface.co/datasets/thivux/phoaudiobook), a large-scale Vietnamese audiobook corpus introduced in [Zero-Shot Text-to-Speech for Vietnamese (ACL 2025)](https://aclanthology.org/2025.acl-short.81.pdf).
-- A private, author-collected Vietnamese/English code-switching set used to improve mixed-language reading. This set is not released.
-
-## Community
-
-Join the KorvaTTS Discord to ask questions, share what you build, request voices, and follow phase-2 development: **[discord.gg/cX5rmsRcsg](https://discord.gg/cX5rmsRcsg)**. Bug reports and feature requests are welcome on [GitHub Issues](https://github.com/dogenthq/KorvaTTS/issues).
-
-## Support the project
-
-KorvaTTS is free and open source. Training runs and voice recordings cost real money — if this project is useful to you, a small donation goes directly into the voice cloning and training work in phase 2. Scan the VietQR code below with any Vietnamese banking app (international options coming later).
-
-<img src="https://img.vietqr.io/image/970407-19035566489014-compact.png?addInfo=Ung%20ho%20KorvaTTS&accountName=LE%20TAN%20NGHIA" alt="VietQR — Techcombank 19035566489014 — LE TAN NGHIA" width="320">
-
-## Contributing
-
-Issues and pull requests are welcome. Run the checks locally:
-
-```bash
-pip install -e ".[dev]"
-ruff check .
-pytest        # model tests auto-skip unless ./assets exists
-```
 
 ## Licenses
 
