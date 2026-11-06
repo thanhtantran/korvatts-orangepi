@@ -66,6 +66,7 @@ async def open_box(runtime: Boxlite) -> boxlite.SimpleBox:
     try:
         box = boxlite.SimpleBox(
             image="python", runtime=runtime, name=BOX_NAME, auto_remove=False, auto_stop=0,
+            cpus=2, memory_mib=4096, disk_size_gb=10,
             entrypoint=SUPERVISOR,
             network=NetworkSpec(
                 outbound=OutboundNetworkSpec(mode="enabled", allow_net=[]),
@@ -128,6 +129,10 @@ async def main() -> None:
     )
     if install.exit_code != 0:
         raise RuntimeError(f"KorvaTTS installation failed: {install.stderr}")
+    # The supervisor starts before files/dependencies arrive. Restart its child
+    # after installing app-local dependencies so Python adds deps/ on startup.
+    await box.exec("sh", "-c", 'pkill -f "python3 -u web_service.py" || true')
+    await asyncio.sleep(3)
     await wait_for_health(box)
 
     # User approval is required before running this public-exposure block.

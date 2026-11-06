@@ -4,9 +4,8 @@ const speed = document.querySelector('#speed');
 const status = document.querySelector('#status');
 const text = document.querySelector('#text');
 const voice = document.querySelector('#voice');
-
 async function loadVoices() {
-  const response = await fetch('/api/voices');
+  const response = await fetch('/web-api/voices');
   if (!response.ok) throw new Error('Không tải được danh sách giọng đọc.');
   const { voices } = await response.json();
   voice.innerHTML = voices.map((name) => `<option value="${name}" ${name === 'khanh_vy' ? 'selected' : ''}>${name.replace('_', ' ')}</option>`).join('');
@@ -18,9 +17,9 @@ button.addEventListener('click', async () => {
   if (!value) { status.textContent = 'Vui lòng nhập nội dung.'; return; }
   button.disabled = true;
   player.hidden = true;
-  status.textContent = 'Đang tạo giọng nói — lần đầu có thể mất thời gian tải model…';
+  status.textContent = 'Đang tạo giọng nói…';
   try {
-    const response = await fetch('/api/tts', {
+    const response = await fetch('/web-api/tts', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: value, voice: voice.value, speed: Number(speed.value) }),
     });

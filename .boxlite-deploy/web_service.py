@@ -8,10 +8,16 @@ import os
 import tempfile
 import threading
 from pathlib import Path
+import sys
 from wsgiref.simple_server import make_server
 
+APP_DIR = Path(__file__).parent
+DEPS_DIR = APP_DIR / "deps"
+if DEPS_DIR.is_dir():
+    sys.path.insert(0, str(DEPS_DIR))
+
 MAX_TEXT_LENGTH = 500
-STATIC_DIR = Path(__file__).with_name("web")
+STATIC_DIR = APP_DIR / "web"
 
 
 class App:

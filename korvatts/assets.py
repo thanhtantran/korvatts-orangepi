@@ -21,6 +21,7 @@ from pathlib import Path
 
 ENV_ASSETS_DIR = "KORVATTS_ASSETS_DIR"
 ENV_HF_REPO = "KORVATTS_HF_REPO"
+ENV_MODEL_ONLINE = "HF_MODEL_ONLINE"
 DEFAULT_HF_REPO = "dogenthq/KorvaTTS"
 
 ONNX_FILES = [
@@ -55,10 +56,11 @@ def resolve_assets_dir(assets_dir: str | Path | None = None, auto_download: bool
     local = (Path.cwd() / "assets").resolve()
     if is_valid_assets_dir(local):
         return local
-    if not auto_download:
+    online = os.environ.get(ENV_MODEL_ONLINE, "true").lower() == "true"
+    if not auto_download or not online:
         raise FileNotFoundError(
             "No local assets found. Pass assets_dir=..., set "
-            f"${ENV_ASSETS_DIR}, or enable auto_download."
+            f"${ENV_ASSETS_DIR}, or set {ENV_MODEL_ONLINE}=true to allow download."
         )
     return download_assets()
 

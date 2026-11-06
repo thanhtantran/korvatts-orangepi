@@ -70,6 +70,47 @@ korvatts synth "Xin chào, đây là KorvaTTS." -v khanh_vy -o hello.wav
 
 Use local assets instead of downloading: pass `TTS(assets_dir="path/to/assets")` or set `KORVATTS_ASSETS_DIR`. The directory must contain `onnx/` and `voice_styles/`.
 
+## Offline web service and Bearer API
+
+The package is an inference library; this repository also includes a small optional
+web demo in `web_service.py`. It serves the UI at `/`, lists voices at
+`GET /api/voices`, and produces a WAV from `POST /api/tts`.
+
+For a fully offline deployment, download/copy the model once into a fixed directory
+that contains `onnx/` and `voice_styles/`, then configure the service with a private
+`.env` file (start from `.env.example`):
+
+```dotenv
+KORVATTS_ASSETS_DIR=/home/boxlite/korvatts-assets
+HF_MODEL_ONLINE=false
+KORVATTS_WEB_ENABLED=true
+KORVATTS_API_TOKEN=replace-with-a-long-random-token
+```
+
+`HF_MODEL_ONLINE=false` is the deployment convention: use only the validated local
+asset directory. Set it to `true` only when deliberately allowing model refreshes.
+The service does not put tokens in source code or browser JavaScript.
+
+All public integration endpoints under `/api/*` require Bearer authentication;
+`/healthz` remains unauthenticated for monitoring. Call the API with:
+
+```bash
+curl https://YOUR-URL/api/voices \
+  -H "Authorization: Bearer $KORVATTS_API_TOKEN"
+
+curl https://YOUR-URL/api/tts \
+  -H "Authorization: Bearer $KORVATTS_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{"text":"Xin chào, đây là KorvaTTS.","voice":"khanh_vy","speed":1.05}' \
+  --output hello.wav
+```
+
+When `KORVATTS_WEB_ENABLED=true`, the UI is immediately usable without asking visitors
+for a token. It receives an HttpOnly, SameSite session cookie and calls the separate
+`/web-api/*` routes; browser code never receives the bearer token. Set
+`KORVATTS_WEB_ENABLED=false` to disable the UI; `/` then displays **“Chế độ web đã
+tắt.”**, while the Bearer-protected `/api/*` endpoints continue serving requests.
+
 ## Language support
 
 - **Primary:** Vietnamese (`lang="vi"`), including English words embedded in Vietnamese text.

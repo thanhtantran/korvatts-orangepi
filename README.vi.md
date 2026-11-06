@@ -70,6 +70,46 @@ korvatts synth "Xin chào, đây là KorvaTTS." -v khanh_vy -o hello.wav
 
 Dùng asset cục bộ thay vì tải: truyền `TTS(assets_dir="duong/dan/assets")` hoặc đặt biến môi trường `KORVATTS_ASSETS_DIR`. Thư mục phải chứa `onnx/` và `voice_styles/`.
 
+## Web service offline và Bearer API
+
+Package là thư viện inference; repository này cũng có web demo tùy chọn tại
+`web_service.py`. Service phục vụ giao diện ở `/`, danh sách giọng tại
+`GET /api/voices` và WAV tại `POST /api/tts`.
+
+Để triển khai hoàn toàn offline, hãy tải/copy model một lần vào thư mục cố định
+chứa `onnx/` và `voice_styles/`, sau đó tạo file `.env` private từ `.env.example`:
+
+```dotenv
+KORVATTS_ASSETS_DIR=/home/boxlite/korvatts-assets
+HF_MODEL_ONLINE=false
+KORVATTS_WEB_ENABLED=true
+KORVATTS_API_TOKEN=replace-with-a-long-random-token
+```
+
+`HF_MODEL_ONLINE=false` là quy ước triển khai: service chỉ dùng thư mục asset local
+đã được kiểm tra. Chỉ đặt thành `true` khi bạn chủ động cho phép model refresh. Token
+không được đặt trong source code hay JavaScript của trình duyệt.
+
+Mọi endpoint tích hợp công khai `/api/*` yêu cầu Bearer authentication; `/healthz`
+không cần token để phục vụ monitoring. Ví dụ:
+
+```bash
+curl https://YOUR-URL/api/voices \
+  -H "Authorization: Bearer $KORVATTS_API_TOKEN"
+
+curl https://YOUR-URL/api/tts \
+  -H "Authorization: Bearer $KORVATTS_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{"text":"Xin chào, đây là KorvaTTS.","voice":"khanh_vy","speed":1.05}' \
+  --output hello.wav
+```
+
+Khi `KORVATTS_WEB_ENABLED=true`, giao diện web dùng được ngay, không yêu cầu khách truy
+cập nhập token. Server cấp cookie session `HttpOnly`, `SameSite` cho UI và UI gọi các
+route riêng `/web-api/*`; bearer token không bao giờ đi vào JavaScript trình duyệt.
+Đặt `KORVATTS_WEB_ENABLED=false` để tắt UI; `/` sẽ hiển thị **“Chế độ web đã tắt.”**,
+trong khi API `/api/*` có Bearer authentication vẫn hoạt động.
+
 ## Hỗ trợ ngôn ngữ
 
 - **Chính:** tiếng Việt (`lang="vi"`), bao gồm từ tiếng Anh xen trong câu tiếng Việt.
